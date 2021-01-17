@@ -56,7 +56,7 @@ const Carousel = (props) => {
             Answer me: I am <input type='text'></input> ft.{' '}
             <input type='text'></input> in. away
           </h1>
-          <button onClick={() => reactSwipeEl.next()}>
+          <button onClick={() => {reactSwipeEl.next(); props.calibrationCapture(); props.addFirebaseUser()}}>
             Take Calibration Photo
           </button>
         </div>

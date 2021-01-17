@@ -8,9 +8,10 @@ import * as blazeface from '@tensorflow-models/blazeface';
 import Webcam from 'react-webcam';
 import { drawBoundingBox } from './utils';
 
-import Carousel from './components/Carousel';
+import Carousel from './components/carousel';
 import CalibrationPane from './components/CalibrationPane';
 import DetectionPane from './components/DetectionPane';
+import firebase from "./firebase";
 
 const App = () => {
   const webcamRef = useRef(null);
@@ -19,6 +20,24 @@ const App = () => {
   const [showCalibrationPane, setShowCalibrationPane] = useState(false);
   const [showDetectionPane, setShowDetectionPane] = useState(false);
   const [calibrated, setCalibrated] = useState(false);
+
+  const ref = firebase.firestore().collection("users");
+  console.log(ref);
+
+  const addUser = () => { // add user to database
+    const db = firebase.firestore();
+    db.collection("users").add({ 
+      email: "bruh",
+      face_pixel_length: 20,
+      screen_dist: 23
+     });
+
+     console.log('Added document with ID: ', db.id);
+  }
+
+  const checkUserPresent = () => {
+    console.log("TODO");
+  }
 
   const setupModel = async () => {
     setWasmPath(
@@ -123,6 +142,9 @@ const App = () => {
               toggleDetectionPane={() => {
                 setShowDetectionPane(!showDetectionPane);
               }}
+
+              calibrationCapture={handleCalibrate}
+              addFirebaseUser = {addUser}
             />
           </div>
         </div>
