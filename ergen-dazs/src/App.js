@@ -3,27 +3,33 @@ import './App.css';
 
 // tensorflow face detection model
 import * as tf from '@tensorflow/tfjs';
-// import * as tfjsWasm from '@tensorflow/tfjs-backend-wasm';
+import { setWasmPath } from '@tensorflow/tfjs-backend-wasm';
 import * as blazeface from '@tensorflow-models/blazeface';
 import Webcam from 'react-webcam';
 import { drawBoundingBox } from './utils';
 
-import Carousel from './components/carousel';
+import Carousel from './components/Carousel';
 
 const App = () => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [loadingModel, setLoadingModel] = useState(true);
 
-  console.log(tf.backend());
+  // console.log(tf.backend());
 
   const runFacedetect = async () => {
+    setWasmPath(
+      'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@latest/dist/tfjs-backend-wasm.wasm'
+    );
+    await tf.setBackend('wasm');
     const model = await blazeface.load();
     setLoadingModel(false);
 
-    // setInterval(() => {
-    //   detect(model);
-    // }, 1000);
+    const timerId = setInterval(() => {
+      detect(model);
+    }, 100);
+    return timerId;
+    // detect(model);
   };
 
   const detect = async (model) => {
@@ -63,7 +69,9 @@ const App = () => {
   };
 
   useEffect(() => {
-    runFacedetect();
+    const timerId = runFacedetect();
+
+    return () => clearInterval(timerId);
   }, []);
 
   return (
