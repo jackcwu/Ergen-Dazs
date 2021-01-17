@@ -10,13 +10,13 @@ import Webcam from 'react-webcam';
 
 import { makePredictions, updateCanvas } from './utils';
 
-import Carousel from './components/Carousel';
+import Carousel from './components/carousel';
 import DistancePane from './components/DistancePane';
 import CalibrationPane from './components/CalibrationPane';
 import DetectionPane from './components/DetectionPane';
 import firebase from './firebase';
 
-const App = () => {
+const App = (props) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [loadingModel, setLoadingModel] = useState(true);
@@ -39,18 +39,46 @@ const App = () => {
   });
 
   const addUser = () => {
+    var currUser = firebase.auth().currentUser.email;
+
     // add user to database
-    // const db = firebase.firestore();
-    // db.collection("users").add({
-    //   email: "bruh",
-    //   face_pixel_length: 20,
-    //   screen_dist: 23
-    //  });
-    //  console.log('Added document with ID: ', db.id);
+    const db = firebase.firestore();
+    db.collection("users").doc(currUser).set({
+      name: 'Tokyo',
+      country: 'Japan'
+    });
+    console.log('Added document with ID: ', db.id);
   };
 
   const checkUserPresent = () => {
-    console.log('TODO');
+    //console.log(firebase.auth().currentUser.email);
+    var currUser = firebase.auth().currentUser.email;
+    if (currUser === null) {
+      console.log("GUEST");
+      return false;
+    }
+
+    console.log(currUser);
+    const doc =  ref.doc(currUser);
+
+    doc.get()
+      .then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          doc.onSnapshot((doc) => {
+        // do stuff with the data
+        console.log("YESS");
+        setShowCarousel(false);
+        return true;
+      });
+    } else {
+      console.log("NOOO");
+      return false;
+    }
+});
+    
+
+
+
   };
 
   const setupModel = async () => {
@@ -91,6 +119,7 @@ const App = () => {
 
   useEffect(() => {
     console.log('mount');
+    checkUserPresent();
     var timerId;
     const setup = async () => {
       const myModel = await setupModel();
@@ -131,6 +160,7 @@ const App = () => {
         <div>Loading Model...</div>
       ) : (
         <div className='container'>
+          <button onClick={() => addUser()}>press</button>
           {showDistancePane && <DistancePane></DistancePane>}
 
           <div className='webcam-container'>

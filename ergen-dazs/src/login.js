@@ -26,13 +26,15 @@ class Login extends Component {
     });
   };
 
+  // currUser = {firebase.auth().currentUser.email ? firebase.auth().currentUser.email : null}
+  
   render() {
     return (
       <div className='App'>
         {this.state.isSignedIn ? (
           <span>
-            {/* <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
-            <h1>Welcome {firebase.auth().currentUser.displayName}</h1> */}
+            <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
+            <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
             <App />
           </span>
         ) : (
