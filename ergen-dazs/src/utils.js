@@ -53,6 +53,18 @@ export const drawBoundingBox = (predictions, ctx) => {
 
       // ctx.fillStyle = 'rgba(255, 0, 0, 0)';
       // ctx.fillRect(start[0], start[1], size[0], size[1]);
+
+      const landmarks = predictions[i].landmarks;
+
+      ctx.fillStyle = 'blue';
+      for (let j = 0; j < landmarks.length; j++) {
+        const x = landmarks[j][0];
+        const y = landmarks[j][1];
+        // ctx.fillRect(x, y, 5, 5);
+        ctx.beginPath();
+        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+        ctx.fill();
+      }
     }
     /*
     `predictions` is an array of objects describing each detected face, for example:

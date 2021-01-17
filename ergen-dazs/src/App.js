@@ -27,8 +27,8 @@ const App = () => {
   const [calibrationData, setCalibrationData] = useState({
     distance: 0,
     faceWidth: 0,
-    faceHeight: 0,
   });
+  const [showBoundingBox, setShowBoundingBox] = useState(true);
   const [distance, setDistance] = useState(0);
 
   const ref = firebase.firestore().collection('users');
@@ -67,15 +67,19 @@ const App = () => {
     const continuousPredictionOnWebcam = async () => {
       const predictions = await makePredictions(model, webcamRef, canvasRef);
       if (predictions !== 'WEBCAM NOT READY' && predictions[0]) {
-        updateCanvas(canvasRef, predictions);
+        if (showBoundingBox) updateCanvas(canvasRef, predictions);
+
+        // Calculate distance from screen
         if (!showCarousel) {
           const prediction = predictions[0];
-          const start = prediction.topLeft;
-          const end = prediction.bottomRight;
-          const faceWidth = -(end[0] - start[0]);
+          const leftEar = prediction.landmarks[5];
+          const rightEar = prediction.landmarks[4];
+          const faceWidth = Math.abs(leftEar[0] - rightEar[0]);
+
           const currentDistance = Math.round(
             (calibrationData.faceWidth / faceWidth) * calibrationData.distance
           );
+          // console.log('caulcated facewidth:', faceWidth, currentDistance);
           setDistance(currentDistance);
         }
       }
@@ -96,7 +100,7 @@ const App = () => {
     setup();
 
     return () => clearInterval(timerId);
-  }, [showCarousel]);
+  }, [showCarousel, showBoundingBox]);
 
   const handleCalibrate = async (feetInput, inchesInput) => {
     const model = await setupModel();
@@ -106,12 +110,12 @@ const App = () => {
       console.log(predictions);
       if (predictions && predictions[0]) {
         const prediction = predictions[0];
-        const start = prediction.topLeft;
-        const end = prediction.bottomRight;
+        const leftEar = prediction.landmarks[5];
+        const rightEar = prediction.landmarks[4];
+        console.log(prediction);
         const calibrationDataTemp = {
           distance: feetInput * 12 + inchesInput,
-          faceWidth: -(end[0] - start[0]),
-          faceheight: end[1] - start[1],
+          faceWidth: Math.abs(leftEar[0] - rightEar[0]),
         };
         console.log('calibrationData', calibrationDataTemp);
         setCalibrationData(calibrationDataTemp);
@@ -143,9 +147,9 @@ const App = () => {
               <Carousel
                 toggleCalibrationPane={setShowCalibrationPane}
                 toggleDetectionPane={setShowDetectionPane}
+                toggleCarousel={setShowCarousel}
                 calibrationCapture={handleCalibrate}
                 addFirebaseUser={addUser}
-                toggleCarousel={setShowCarousel}
               />
             ) : (
               <div className='detection-footer-container'>
@@ -154,7 +158,8 @@ const App = () => {
                     <input
                       type='checkbox'
                       name='show-bounding-box'
-                      checked={true}
+                      checked={showBoundingBox}
+                      onClick={() => setShowBoundingBox(!showBoundingBox)}
                     ></input>
                     <label htmlFor='show-bounding-box'>Show Box</label>
                   </span>
@@ -167,15 +172,12 @@ const App = () => {
                     <label htmlFor='take-photo'>Take Photo</label>
                   </span>
                 </div>
-                <div
-                  style={{
-                    position: 'relative',
-                    display: 'flex',
-                    justifyContent: 'center',
-                  }}
-                >
+                <div>
                   <div>
-                    <h1>You are ft. {distance} in. away</h1>
+                    <h1>
+                      You are ft. {Math.floor(distance / 12)} in.{' '}
+                      {distance % 12} away
+                    </h1>
                     <h1>Your level is __</h1>
                     <button>Done</button>
                   </div>

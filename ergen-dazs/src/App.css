@@ -37,7 +37,9 @@
 }
 
 .carousel-container {
-  /* text-align: center; */
+  display: flex;
+  flex-direction: column;
+  height: 18vh;
 }
 
 .detection-footer-container {
@@ -73,6 +75,6 @@ button {
   border: none;
   border-radius: 20px;
   padding: 0.2em 0;
-  width: 600px;
+  width: 30%;
   font-size: 2rem;
 }

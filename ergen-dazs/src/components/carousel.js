@@ -63,6 +63,7 @@ const Carousel = (props) => {
             <input
               type='text'
               onInput={(e) => handleInchesInputChange(e)}
+              placeholder={0}
             ></input>{' '}
             in. away
           </h1>
