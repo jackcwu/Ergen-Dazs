@@ -1,9 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto&display=swap');
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 1em;
+}
+
 .App {
-  /* text-align: center; */
   display: flex;
   flex-direction: column;
   justify-content: center;
   min-height: 100vh;
+}
+
+.Login {
+  display: flex;
+  min-height: 100vh;
+  align-items: center;
+  justify-content: center;
 }
 
 .container {
@@ -77,4 +90,18 @@ button {
   padding: 0.2em 0;
   width: 30%;
   font-size: 2rem;
+}
+
+.login-container {
+  text-align: center;
+  color: gray;
+  background-color: #c4c4c4;
+  border-radius: 30px;
+  font-size: 3rem;
+  padding: 1em 0.5em;
+}
+
+.login-container h1 {
+  padding: 0;
+  margin: 0;
 }

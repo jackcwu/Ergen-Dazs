@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactSwipe from 'react-swipe';
+import ReactSwipe, { contextType } from 'react-swipe';
 import './App.css';
 
 // tensorflow face detection model
@@ -8,7 +8,7 @@ import { setWasmPath } from '@tensorflow/tfjs-backend-wasm';
 import * as blazeface from '@tensorflow-models/blazeface';
 import Webcam from 'react-webcam';
 
-import { makePredictions, updateCanvas } from './utils';
+import { drawBoundingBox, makePredictions, updateCanvas } from './utils';
 
 import Carousel from './components/carousel';
 import DistancePane from './components/DistancePane';
@@ -43,9 +43,9 @@ const App = (props) => {
 
     // add user to database
     const db = firebase.firestore();
-    db.collection("users").doc(currUser).set({
+    db.collection('users').doc(currUser).set({
       name: 'Tokyo',
-      country: 'Japan'
+      country: 'Japan',
     });
     console.log('Added document with ID: ', db.id);
   };
@@ -54,31 +54,26 @@ const App = (props) => {
     //console.log(firebase.auth().currentUser.email);
     var currUser = firebase.auth().currentUser.email;
     if (currUser === null) {
-      console.log("GUEST");
+      console.log('GUEST');
       return false;
     }
 
     console.log(currUser);
-    const doc =  ref.doc(currUser);
+    const doc = ref.doc(currUser);
 
-    doc.get()
-      .then((docSnapshot) => {
-        if (docSnapshot.exists) {
-          doc.onSnapshot((doc) => {
-        // do stuff with the data
-        console.log("YESS");
-        setShowCarousel(false);
-        return true;
-      });
-    } else {
-      console.log("NOOO");
-      return false;
-    }
-});
-    
-
-
-
+    doc.get().then((docSnapshot) => {
+      if (docSnapshot.exists) {
+        doc.onSnapshot((doc) => {
+          // do stuff with the data
+          console.log('YESS');
+          setShowCarousel(false);
+          return true;
+        });
+      } else {
+        console.log('NOOO');
+        return false;
+      }
+    });
   };
 
   const setupModel = async () => {
@@ -154,6 +149,11 @@ const App = (props) => {
     }
   };
 
+  const sendScreenshot = async () => {
+    let imgbase64 = webcamRef.current.getScreenshot();
+    props.onDoneWithMain(imgbase64);
+  };
+
   return (
     <div className='App'>
       {loadingModel ? (
@@ -205,11 +205,11 @@ const App = (props) => {
                 <div>
                   <div>
                     <h1>
-                      You are ft. {Math.floor(distance / 12)} in.{' '}
-                      {distance % 12} away
+                      You are {Math.floor(distance / 12)} ft. {distance % 12}{' '}
+                      in. away
                     </h1>
                     <h1>Your level is __</h1>
-                    <button>Done</button>
+                    <button onClick={() => sendScreenshot()}>Done</button>
                   </div>
                 </div>
               </div>
