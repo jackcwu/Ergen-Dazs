@@ -17,15 +17,15 @@ const Carousel = (props) => {
 
   const slideCallback = () => {
     if (reactSwipeEl !== null) {
-      // console.log(reactSwipeEl.getPos());
       const pos = reactSwipeEl.getPos();
       setCurrentPos(pos);
       if (pos === 2) {
         props.toggleCalibrationPane();
-      }
-      if (pos === 3) {
+      } else if (pos === 3) {
         props.toggleCalibrationPane();
         props.toggleDetectionPane();
+        props.calibrationCapture();
+        props.addFirebaseUser();
       }
     }
   };
@@ -53,10 +53,23 @@ const Carousel = (props) => {
 
         <div style={{ textAlign: 'center' }}>
           <h1>
-            Answer me: I am <input type='text'></input> ft.{' '}
-            <input type='text'></input> in. away
+            Answer me: I am{' '}
+            <input
+              type='text'
+              onInput={(e) => handleFeetInputChange(e)}
+            ></input>{' '}
+            ft.{' '}
+            <input
+              type='text'
+              onInput={(e) => handleInchesInputChange(e)}
+            ></input>{' '}
+            in. away
           </h1>
-          <button onClick={() => {reactSwipeEl.next(); props.calibrationCapture(); props.addFirebaseUser()}}>
+          <button
+            onClick={() => {
+              reactSwipeEl.next();
+            }}
+          >
             Take Calibration Photo
           </button>
         </div>
@@ -73,10 +86,10 @@ const Carousel = (props) => {
               <input
                 type='checkbox'
                 name='show-bounding-box'
-                checked='true'
+                checked={true}
               ></input>
               <label htmlFor='show-bounding-box'>Show Box</label>
-              <input type='checkbox' name='take-photo' checked='true'></input>
+              <input type='checkbox' name='take-photo' checked={true}></input>
               <label htmlFor='take-photo'>Take Photo</label>
             </div>
             <div>

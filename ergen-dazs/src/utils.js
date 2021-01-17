@@ -1,3 +1,44 @@
+export const makePredictions = async (model, webcamRef, canvasRef) => {
+  // check if webcam is ready and has enough data (HAVE_ENOUGH_DATA === 4)
+  if (
+    typeof webcamRef.current !== 'undefined' &&
+    webcamRef.current !== null &&
+    webcamRef.current.video.readyState === 4
+  ) {
+    // Get Video Properties
+    const video = webcamRef.current.video;
+    const videoWidth = webcamRef.current.video.videoWidth;
+    const videoHeight = webcamRef.current.video.videoHeight;
+
+    // Set video width
+    webcamRef.current.video.width = videoWidth;
+    webcamRef.current.video.height = videoHeight;
+
+    // Set canvas width
+    canvasRef.current.width = videoWidth;
+    canvasRef.current.height = videoHeight;
+
+    // Make detections
+    const returnTensors = false;
+    const flipHorizontal = true;
+    const predictions = await model.estimateFaces(
+      video,
+      returnTensors,
+      flipHorizontal
+    );
+
+    return predictions;
+  } else {
+    return 'WEBCAM NOT READY';
+  }
+};
+
+export const updateCanvas = (canvasRef, predictions) => {
+  // Get canvas context
+  const ctx = canvasRef.current.getContext('2d');
+  requestAnimationFrame(() => drawBoundingBox(predictions, ctx));
+};
+
 // Draw bounding box around face
 export const drawBoundingBox = (predictions, ctx) => {
   if (predictions.length > 0) {

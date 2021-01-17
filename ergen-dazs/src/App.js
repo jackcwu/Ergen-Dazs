@@ -6,12 +6,13 @@ import * as tf from '@tensorflow/tfjs';
 import { setWasmPath } from '@tensorflow/tfjs-backend-wasm';
 import * as blazeface from '@tensorflow-models/blazeface';
 import Webcam from 'react-webcam';
-import { drawBoundingBox } from './utils';
+
+import { makePredictions, updateCanvas } from './utils';
 
 import Carousel from './components/carousel';
 import CalibrationPane from './components/CalibrationPane';
 import DetectionPane from './components/DetectionPane';
-import firebase from "./firebase";
+import firebase from './firebase';
 
 const App = () => {
   const webcamRef = useRef(null);
@@ -21,23 +22,23 @@ const App = () => {
   const [showDetectionPane, setShowDetectionPane] = useState(false);
   const [calibrated, setCalibrated] = useState(false);
 
-  const ref = firebase.firestore().collection("users");
+  const ref = firebase.firestore().collection('users');
   console.log(ref);
 
-  const addUser = () => { // add user to database
-    const db = firebase.firestore();
-    db.collection("users").add({ 
-      email: "bruh",
-      face_pixel_length: 20,
-      screen_dist: 23
-     });
-
-     console.log('Added document with ID: ', db.id);
-  }
+  const addUser = () => {
+    // add user to database
+    // const db = firebase.firestore();
+    // db.collection("users").add({
+    //   email: "bruh",
+    //   face_pixel_length: 20,
+    //   screen_dist: 23
+    //  });
+    //  console.log('Added document with ID: ', db.id);
+  };
 
   const checkUserPresent = () => {
-    console.log("TODO");
-  }
+    console.log('TODO');
+  };
 
   const setupModel = async () => {
     setWasmPath(
@@ -50,49 +51,19 @@ const App = () => {
   };
 
   const runFacedetect = (model) => {
-    const timerId = setInterval(() => {
-      detect(model);
-    }, 100);
+    const continuousPredictionOnWebcam = async () => {
+      const predictions = await makePredictions(model, webcamRef, canvasRef);
+      if (predictions !== 'WEBCAM NOT READY') {
+        updateCanvas(canvasRef, predictions);
+      }
+    };
+
+    const timerId = setInterval(continuousPredictionOnWebcam, 100);
     return timerId;
   };
 
-  const detect = async (model) => {
-    // check if webcam is ready and has enough data (HAVE_ENOUGH_DATA === 4)
-    if (
-      typeof webcamRef.current !== 'undefined' &&
-      webcamRef.current !== null &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      // Get Video Properties
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
-
-      // Set video width
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
-
-      // Set canvas width
-      canvasRef.current.width = videoWidth;
-      canvasRef.current.height = videoHeight;
-
-      // Make detections
-      const returnTensors = false;
-      const flipHorizontal = true;
-      const predictions = await model.estimateFaces(
-        video,
-        returnTensors,
-        flipHorizontal
-      );
-
-      // Get canvas context
-      const ctx = canvasRef.current.getContext('2d');
-      requestAnimationFrame(() => drawBoundingBox(predictions, ctx));
-    }
-  };
-
   useEffect(() => {
-    console.log('mounted');
+    console.log('mount');
     var timerId;
     const setup = async () => {
       const myModel = await setupModel();
@@ -108,12 +79,8 @@ const App = () => {
     const model = await setupModel();
 
     if (model) {
-      const predictions = await model.estimateFaces(
-        webcamRef.current.video,
-        false,
-        true
-      );
-      console.log('predictions: ', predictions);
+      const predictions = await makePredictions(model, webcamRef, canvasRef);
+      console.log(predictions);
     }
 
     setCalibrated(true);
@@ -142,9 +109,8 @@ const App = () => {
               toggleDetectionPane={() => {
                 setShowDetectionPane(!showDetectionPane);
               }}
-
               calibrationCapture={handleCalibrate}
-              addFirebaseUser = {addUser}
+              addFirebaseUser={addUser}
             />
           </div>
         </div>
