@@ -2,6 +2,7 @@ import React, { Component } from "react"
 import "./App.css"
 import firebase from "firebase"
 import StyledFirebaseAuth from "react-firebaseui/StyledFirebaseAuth"
+import App from './App'
 import * as firebaseui from 'firebaseui'
 import 'firebaseui/dist/firebaseui.css'
 
@@ -30,13 +31,9 @@ class Login extends Component {
       <div className="App">
         {this.state.isSignedIn ? (
           <span>
-            <div>Signed In!</div>
             <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
             <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
-            <img
-              alt="profile picture"
-              src={firebase.auth().currentUser.photoURL}
-            />
+            <App/>
           </span>
         ) : (
           <StyledFirebaseAuth
