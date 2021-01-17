@@ -111,8 +111,6 @@ const App = () => {
             <canvas ref={canvasRef} className='canvas'></canvas>
           </div>
 
-          <button onClick={handleCalibrate}>c'mon</button>
-
           {showCalibrationPane && <CalibrationPane></CalibrationPane>}
 
           {showDetectionPane && <DetectionPane></DetectionPane>}
