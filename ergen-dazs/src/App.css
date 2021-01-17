@@ -21,6 +21,17 @@
   overflow: hidden;
 }
 
+.details-right-pane {
+  position: absolute;
+  top: 30%;
+  right: 8%;
+  width: 15%;
+}
+
+.calibrate-pane {
+  /* display: none; */
+}
+
 .carousel-container {
   /* text-align: center; */
 }
