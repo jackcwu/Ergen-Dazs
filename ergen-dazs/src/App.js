@@ -35,14 +35,15 @@ const App = (props) => {
   });
 
   const addUser = () => {
+    var currUser = firebase.auth().currentUser.email;
+
     // add user to database
-    // const db = firebase.firestore();
-    // db.collection("users").add({
-    //   email: "bruh",
-    //   face_pixel_length: 20,
-    //   screen_dist: 23
-    //  });
-    //  console.log('Added document with ID: ', db.id);
+    const db = firebase.firestore();
+    db.collection("users").doc(currUser).set({
+      name: 'Tokyo',
+      country: 'Japan'
+    });
+    console.log('Added document with ID: ', db.id);
   };
 
   const checkUserPresent = () => {
@@ -61,9 +62,12 @@ const App = (props) => {
         if (docSnapshot.exists) {
           doc.onSnapshot((doc) => {
         // do stuff with the data
+        console.log("YESS");
+        setShowCarousel(false);
         return true;
       });
     } else {
+      console.log("NOOO");
       return false;
     }
 });
@@ -98,6 +102,7 @@ const App = (props) => {
 
   useEffect(() => {
     console.log('mount');
+    checkUserPresent();
     var timerId;
     const setup = async () => {
       const myModel = await setupModel();
@@ -126,7 +131,7 @@ const App = (props) => {
         <div>Loading Model...</div>
       ) : (
         <div className='container'>
-          <button onClick={() => checkUserPresent()}>press</button>
+          <button onClick={() => addUser()}>press</button>
           {showDistancePane && <DistancePane></DistancePane>}
 
           <div className='webcam-container'>
