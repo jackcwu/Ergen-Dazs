@@ -15,7 +15,7 @@ const Carousel = (props) => {
     setInchesInput(e.target.value);
   };
 
-  const slideCallback = () => {
+  const slideCallback = async () => {
     if (reactSwipeEl !== null) {
       const pos = reactSwipeEl.getPos();
       console.log(pos);
@@ -25,6 +25,7 @@ const Carousel = (props) => {
       } else if (pos === 3) {
         props.toggleCalibrationPane(false);
         props.toggleDetectionPane(true);
+        await props.calibrationCapture(feetInput, inchesInput);
         props.toggleCarousel(false);
       }
     }

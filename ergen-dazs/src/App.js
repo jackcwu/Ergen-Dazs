@@ -10,7 +10,7 @@ import Webcam from 'react-webcam';
 
 import { makePredictions, updateCanvas } from './utils';
 
-import Carousel from './components/carousel';
+import Carousel from './components/Carousel';
 import DistancePane from './components/DistancePane';
 import CalibrationPane from './components/CalibrationPane';
 import DetectionPane from './components/DetectionPane';
@@ -24,8 +24,12 @@ const App = () => {
   const [showDetectionPane, setShowDetectionPane] = useState(false);
   const [showDistancePane, setShowDistancePane] = useState(false);
   const [showCarousel, setShowCarousel] = useState(true);
-  const [calibrated, setCalibrated] = useState(false);
-  const [topLeft, setTopLeft] = useState(0);
+  const [calibrationData, setCalibrationData] = useState({
+    distance: 0,
+    faceWidth: 0,
+    faceHeight: 0,
+  });
+  const [distance, setDistance] = useState(0);
 
   const ref = firebase.firestore().collection('users');
   // console.log(ref);
@@ -62,9 +66,18 @@ const App = () => {
   const runFacedetect = (model) => {
     const continuousPredictionOnWebcam = async () => {
       const predictions = await makePredictions(model, webcamRef, canvasRef);
-      if (predictions !== 'WEBCAM NOT READY') {
+      if (predictions !== 'WEBCAM NOT READY' && predictions[0]) {
         updateCanvas(canvasRef, predictions);
-        if (!showCarousel) setTopLeft(Math.round(predictions[0].topLeft[0]));
+        if (!showCarousel) {
+          const prediction = predictions[0];
+          const start = prediction.topLeft;
+          const end = prediction.bottomRight;
+          const faceWidth = -(end[0] - start[0]);
+          const currentDistance = Math.round(
+            (calibrationData.faceWidth / faceWidth) * calibrationData.distance
+          );
+          setDistance(currentDistance);
+        }
       }
     };
 
@@ -85,15 +98,27 @@ const App = () => {
     return () => clearInterval(timerId);
   }, [showCarousel]);
 
-  const handleCalibrate = async () => {
+  const handleCalibrate = async (feetInput, inchesInput) => {
     const model = await setupModel();
 
     if (model) {
       const predictions = await makePredictions(model, webcamRef, canvasRef);
       console.log(predictions);
+      if (predictions && predictions[0]) {
+        const prediction = predictions[0];
+        const start = prediction.topLeft;
+        const end = prediction.bottomRight;
+        const calibrationDataTemp = {
+          distance: feetInput * 12 + inchesInput,
+          faceWidth: -(end[0] - start[0]),
+          faceheight: end[1] - start[1],
+        };
+        console.log('calibrationData', calibrationDataTemp);
+        setCalibrationData(calibrationDataTemp);
+      } else {
+        console.log('No valid prediction made');
+      }
     }
-
-    // setCalibrated(true);
   };
 
   return (
@@ -123,7 +148,25 @@ const App = () => {
                 toggleCarousel={setShowCarousel}
               />
             ) : (
-              <div style={{ textAlign: 'center' }}>
+              <div className='detection-footer-container'>
+                <div className='checkmark-container'>
+                  <span>
+                    <input
+                      type='checkbox'
+                      name='show-bounding-box'
+                      checked={true}
+                    ></input>
+                    <label htmlFor='show-bounding-box'>Show Box</label>
+                  </span>
+                  <span>
+                    <input
+                      type='checkbox'
+                      name='take-photo'
+                      checked={true}
+                    ></input>
+                    <label htmlFor='take-photo'>Take Photo</label>
+                  </span>
+                </div>
                 <div
                   style={{
                     position: 'relative',
@@ -131,23 +174,8 @@ const App = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  {' '}
-                  <div style={{ position: 'absolute' }}>
-                    <input
-                      type='checkbox'
-                      name='show-bounding-box'
-                      checked={true}
-                    ></input>
-                    <label htmlFor='show-bounding-box'>Show Box</label>
-                    <input
-                      type='checkbox'
-                      name='take-photo'
-                      checked={true}
-                    ></input>
-                    <label htmlFor='take-photo'>Take Photo</label>
-                  </div>
                   <div>
-                    <h1>You are ft. {topLeft} in. away</h1>
+                    <h1>You are ft. {distance} in. away</h1>
                     <h1>Your level is __</h1>
                     <button>Done</button>
                   </div>

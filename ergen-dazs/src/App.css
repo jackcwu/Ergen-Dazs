@@ -7,9 +7,6 @@
 }
 
 .container {
-  /* display: flex;
-  flex-direction: column;
-  align-items: center; */
 }
 
 .webcam-container {
@@ -43,6 +40,20 @@
   /* text-align: center; */
 }
 
+.detection-footer-container {
+  text-align: center;
+  position: relative;
+}
+
+.checkmark-container {
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  bottom: 0;
+  right: 70%;
+  margin: 0.5em;
+}
+
 .webcam {
   -webkit-transform: scaleX(-1);
   transform: scaleX(-1);
@@ -65,38 +76,3 @@ button {
   width: 600px;
   font-size: 2rem;
 }
-
-/* .App-logo {
-  height: 40vmin;
-  pointer-events: none;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-} */
-
-/* .App-link {
-  color: #61dafb;
-} */
-
-/* @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-} */
