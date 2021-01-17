@@ -28,6 +28,13 @@
   width: 15%;
 }
 
+.details-left-pane {
+  position: absolute;
+  top: 30%;
+  left: 8%;
+  width: 15%;
+}
+
 .calibrate-pane {
   /* display: none; */
 }

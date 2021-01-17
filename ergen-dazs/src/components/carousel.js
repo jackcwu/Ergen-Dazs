@@ -18,14 +18,14 @@ const Carousel = (props) => {
   const slideCallback = () => {
     if (reactSwipeEl !== null) {
       const pos = reactSwipeEl.getPos();
+      console.log(pos);
       setCurrentPos(pos);
       if (pos === 2) {
-        props.toggleCalibrationPane();
+        props.toggleCalibrationPane(true);
       } else if (pos === 3) {
-        props.toggleCalibrationPane();
-        props.toggleDetectionPane();
-        props.calibrationCapture();
-        props.addFirebaseUser();
+        props.toggleCalibrationPane(false);
+        props.toggleDetectionPane(true);
+        props.toggleCarousel(false);
       }
     }
   };
@@ -75,35 +75,9 @@ const Carousel = (props) => {
         </div>
 
         <div style={{ textAlign: 'center' }}>
-          <div
-            style={{
-              position: 'relative',
-              display: 'flex',
-              justifyContent: 'center',
-            }}
-          >
-            <div style={{ position: 'absolute' }}>
-              <input
-                type='checkbox'
-                name='show-bounding-box'
-                checked={true}
-              ></input>
-              <label htmlFor='show-bounding-box'>Show Box</label>
-              <input type='checkbox' name='take-photo' checked={true}></input>
-              <label htmlFor='take-photo'>Take Photo</label>
-            </div>
-            <div>
-              <h1>You are __ ft. __ in. away</h1>
-              <h1>Your level is __</h1>
-              <button onClick={() => reactSwipeEl.next()}>Done</button>
-            </div>
-          </div>
+          <h1></h1>
         </div>
       </ReactSwipe>
-      <div>
-        <button onClick={() => reactSwipeEl.prev()}>Previous</button>
-        <button onClick={() => reactSwipeEl.next()}>Next</button>
-      </div>
     </>
   );
 };
