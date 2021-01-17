@@ -16,7 +16,7 @@ import CalibrationPane from './components/CalibrationPane';
 import DetectionPane from './components/DetectionPane';
 import firebase from './firebase';
 
-const App = () => {
+const App = (props) => {
   const webcamRef = useRef(null);
   const canvasRef = useRef(null);
   const [loadingModel, setLoadingModel] = useState(true);
@@ -46,7 +46,31 @@ const App = () => {
   };
 
   const checkUserPresent = () => {
-    console.log('TODO');
+    //console.log(firebase.auth().currentUser.email);
+    var currUser = firebase.auth().currentUser.email;
+    if (currUser === null) {
+      console.log("GUEST");
+      return false;
+    }
+
+    console.log(currUser);
+    const doc =  ref.doc(currUser);
+
+    doc.get()
+      .then((docSnapshot) => {
+        if (docSnapshot.exists) {
+          doc.onSnapshot((doc) => {
+        // do stuff with the data
+        return true;
+      });
+    } else {
+      return false;
+    }
+});
+    
+
+
+
   };
 
   const setupModel = async () => {
@@ -102,6 +126,7 @@ const App = () => {
         <div>Loading Model...</div>
       ) : (
         <div className='container'>
+          <button onClick={() => checkUserPresent()}>press</button>
           {showDistancePane && <DistancePane></DistancePane>}
 
           <div className='webcam-container'>

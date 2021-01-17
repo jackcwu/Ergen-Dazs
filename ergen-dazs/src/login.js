@@ -26,6 +26,8 @@ class Login extends Component {
     })
   }
 
+  // currUser = {firebase.auth().currentUser.email ? firebase.auth().currentUser.email : null}
+  
   render() {
     return (
       <div className="App">
@@ -33,7 +35,7 @@ class Login extends Component {
           <span>
             <button onClick={() => firebase.auth().signOut()}>Sign out!</button>
             <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
-            <App/>
+            <App />
           </span>
         ) : (
           <StyledFirebaseAuth
