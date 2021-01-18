@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactSwipe, { contextType } from 'react-swipe';
+import ReactSwipe from 'react-swipe';
 import './App.css';
 
 // tensorflow face detection model
@@ -38,21 +38,24 @@ const App = (props) => {
     console.log('render');
   });
 
-  const addUser = () => {
+  const addUser = (dist, face) => {
     var currUser = firebase.auth().currentUser.email;
 
     // add user to database
     const db = firebase.firestore();
-    db.collection('users').doc(currUser).set({
-      name: 'Tokyo',
-      country: 'Japan',
-    });
-    console.log('Added document with ID: ', db.id);
+    db.collection('users')
+      .doc(currUser)
+      .set({
+        distance: parseInt(dist, 10),
+        face_width: face,
+      });
+    //console.log('Added document with ID: ', db.id);
   };
 
   const checkUserPresent = () => {
     //console.log(firebase.auth().currentUser.email);
     var currUser = firebase.auth().currentUser.email;
+    console.log('CURRENT USER IS: ', currUser);
     if (currUser === null) {
       console.log('GUEST');
       return false;
@@ -74,6 +77,66 @@ const App = (props) => {
         return false;
       }
     });
+  };
+
+  const skipCalibrate = async () => {
+    console.log('SKIPCALIBRATE START');
+
+    var currUser = firebase.auth().currentUser.email;
+    console.log('CURRENT USER IS: ', currUser);
+    if (currUser === null) {
+      console.log('GUEST');
+      return false;
+    }
+
+    //console.log("CURRENT USER IS: ", currUser);
+    const doc = ref.doc(currUser);
+
+    const docSnapshot = await doc.get();
+    if (docSnapshot.exists) {
+      // do stuff with the data
+      console.log('YESS');
+      await retrieveDBmeasurements();
+      setShowCarousel(false);
+      return true;
+    } else {
+      console.log('NOOO');
+      return false;
+    }
+
+    // if (checkUserPresent()) {
+    //   console.log("branch 1")
+    //   setShowCarousel(false);
+    // } else {
+    //   console.log("branch 2")
+    //   console.log("user not present")
+    // }
+  };
+
+  const retrieveDBmeasurements = async () => {
+    // get the calibration data since it's already in the database
+    var currUser = firebase.auth().currentUser.email;
+    var docRef = ref.doc(currUser);
+
+    try {
+      const doc = await docRef.get();
+      if (doc.exists) {
+        console.log('Document data:', doc.data());
+        console.log('DIST', doc.data().distance);
+        setCalibrationData({
+          distance: doc.data().distance,
+          faceWidth: doc.data().face_width,
+        });
+      } else {
+        // doc.data() will be undefined in this case
+        console.log('No such document!');
+      }
+    } catch (error) {
+      console.log('Error getting document:', error);
+    }
+    //console.log("calibrateDB ISSSS", calibrateDB.data)
+    //setCalibrationData(calibrateDB.distance, calibrateDB.face_width);
+    //console.log("FOUND OLD CALIBRATION IT IS:", calibrateDB.distance, calibrateDB.face_width)
   };
 
   const setupModel = async () => {
@@ -102,12 +165,6 @@ const App = (props) => {
           const currentDistance = Math.round(
             (calibrationData.faceWidth / faceWidth) * calibrationData.distance
           );
-          console.log(
-            'caulcated facewidth:',
-            faceWidth,
-            currentDistance,
-            calibrationData
-          );
           setDistance(currentDistance);
         }
       }
@@ -119,13 +176,14 @@ const App = (props) => {
 
   useEffect(() => {
     console.log('mount');
-    checkUserPresent();
+    // checkUserPresent();
     var timerId;
     const setup = async () => {
       const myModel = await setupModel();
       timerId = runFacedetect(myModel);
     };
 
+    skipCalibrate();
     setup();
 
     return () => clearInterval(timerId);
@@ -147,6 +205,11 @@ const App = (props) => {
           faceWidth: Math.abs(leftEar[0] - rightEar[0]),
         };
         console.log('calibrationData', calibrationDataTemp);
+        var currUser = firebase.auth().currentUser.email;
+        console.log('CURRENT USER IS: ', currUser);
+        if (currUser !== null) {
+          addUser(calibrationDataTemp.distance, calibrationDataTemp.faceWidth); // update calibration data in DB
+        }
         setCalibrationData(calibrationDataTemp);
       } else {
         console.log('No valid prediction made');
@@ -209,7 +272,7 @@ const App = (props) => {
                 <div>
                   <div>
                     <h1>
-                      You are {Math.floor(distance / 12)} ft. {distance % 12}{' '}
+                      You are {Math.floor(distance / 12)} ft. {distance % 12}
                       in. away
                     </h1>
                     <h1>Your level is __</h1>
