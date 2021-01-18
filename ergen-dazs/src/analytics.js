@@ -4,7 +4,7 @@ function Analytics({ screenshot }) {
   console.log(screenshot, 'img');
   return (
     <div>
-      sup lmfao
+      <h1>I am ergonomic af</h1>
       <img src={screenshot} alt='screenshot'></img>
     </div>
   );

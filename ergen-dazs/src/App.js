@@ -102,7 +102,12 @@ const App = (props) => {
           const currentDistance = Math.round(
             (calibrationData.faceWidth / faceWidth) * calibrationData.distance
           );
-          // console.log('caulcated facewidth:', faceWidth, currentDistance);
+          console.log(
+            'caulcated facewidth:',
+            faceWidth,
+            currentDistance,
+            calibrationData
+          );
           setDistance(currentDistance);
         }
       }
@@ -149,7 +154,7 @@ const App = (props) => {
     }
   };
 
-  const sendScreenshot = async () => {
+  const sendScreenshot = () => {
     let imgbase64 = webcamRef.current.getScreenshot();
     props.onDoneWithMain(imgbase64);
   };
@@ -160,7 +165,6 @@ const App = (props) => {
         <div>Loading Model...</div>
       ) : (
         <div className='container'>
-          <button onClick={() => addUser()}>press</button>
           {showDistancePane && <DistancePane></DistancePane>}
 
           <div className='webcam-container'>

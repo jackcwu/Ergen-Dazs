@@ -35,8 +35,11 @@ class Login extends Component {
       <>
         {this.state.isSignedIn ? (
           <div>
-            <div>
-              <button onClick={() => firebase.auth().signOut()}>
+            <div className='navbar'>
+              <button
+                className='signout-button'
+                onClick={() => firebase.auth().signOut()}
+              >
                 Sign out!
               </button>
               <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
