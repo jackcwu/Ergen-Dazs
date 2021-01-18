@@ -102,7 +102,7 @@ const App = (props) => {
           const currentDistance = Math.round(
             (calibrationData.faceWidth / faceWidth) * calibrationData.distance
           );
-          // console.log('caulcated facewidth:', faceWidth, currentDistance);
+          // console.log('caulcated facewidth:', faceWidth, currentDistance, calibrationData);
           setDistance(currentDistance);
         }
       }
@@ -137,8 +137,9 @@ const App = (props) => {
         const leftEar = prediction.landmarks[5];
         const rightEar = prediction.landmarks[4];
         console.log(prediction);
+        console.log('feetinput', feetInput, 'inchesinput', inchesInput)
         const calibrationDataTemp = {
-          distance: feetInput * 12 + inchesInput,
+          distance: parseInt(feetInput * 12, 10) + parseInt(inchesInput, 10),
           faceWidth: Math.abs(leftEar[0] - rightEar[0]),
         };
         console.log('calibrationData', calibrationDataTemp);
