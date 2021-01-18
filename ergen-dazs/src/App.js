@@ -49,7 +49,7 @@ const App = (props) => {
         distance: parseInt(dist, 10),
         face_width: face,
       });
-    //console.log('Added document with ID: ', db.id);
+    console.log('Added document with ID: ');
   };
 
   const checkUserPresent = () => {
@@ -201,7 +201,7 @@ const App = (props) => {
         const rightEar = prediction.landmarks[4];
         console.log(prediction);
         const calibrationDataTemp = {
-          distance: feetInput * 12 + inchesInput,
+          distance: parseInt(feetInput * 12, 10) + parseInt(inchesInput, 10),
           faceWidth: Math.abs(leftEar[0] - rightEar[0]),
         };
         console.log('calibrationData', calibrationDataTemp);
