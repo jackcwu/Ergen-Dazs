@@ -48,7 +48,7 @@ export const drawBoundingBox = (predictions, ctx) => {
       const size = [end[0] - start[0], end[1] - start[1]];
 
       // Render a rectangle over each detected face.
-      ctx.strokeStyle = 'green';
+      ctx.strokeStyle = '#38A94C';
       ctx.strokeRect(start[0], start[1], size[0], size[1]);
 
       // ctx.fillStyle = 'rgba(255, 0, 0, 0)';
@@ -56,7 +56,7 @@ export const drawBoundingBox = (predictions, ctx) => {
 
       const landmarks = predictions[i].landmarks;
 
-      ctx.fillStyle = 'blue';
+      ctx.fillStyle = '#38A94C';
       for (let j = 0; j < landmarks.length; j++) {
         const x = landmarks[j][0];
         const y = landmarks[j][1];

@@ -42,7 +42,9 @@ class Login extends Component {
               >
                 Sign out!
               </button>
-              <h1>Welcome {firebase.auth().currentUser.displayName}</h1>
+              <h1>
+                Welcome, <span>{firebase.auth().currentUser.displayName}</span>
+              </h1>
             </div>
             <div>
               {!this.state.doneWithMain ? (

@@ -225,7 +225,18 @@ const App = (props) => {
   return (
     <div className='App'>
       {loadingModel ? (
-        <div>Loading Model...</div>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize: '5rem',
+            color: '#45d4d2',
+            fontStyle: 'italic',
+            fontWeight: 'bold',
+          }}
+        >
+          Loading Model...
+        </div>
       ) : (
         <div className='container'>
           {showDistancePane && <DistancePane></DistancePane>}
@@ -272,10 +283,13 @@ const App = (props) => {
                 <div>
                   <div>
                     <h1>
-                      You are {Math.floor(distance / 12)} ft. {distance % 12}
+                      You are {Math.floor(distance / 12)} ft. {distance % 12}{' '}
                       in. away
                     </h1>
-                    <h1>Your level is __</h1>
+                    <h1>
+                      Your level is{' '}
+                      <span style={{ color: '#38A94C' }}>great!</span>
+                    </h1>
                     <button onClick={() => sendScreenshot()}>Done</button>
                   </div>
                 </div>
