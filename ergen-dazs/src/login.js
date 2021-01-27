@@ -9,7 +9,12 @@ import 'firebaseui/dist/firebaseui.css';
 import './components/LoginBox';
 
 class Login extends Component {
-  state = { isSignedIn: false, doneWithMain: false, screenshot: '' };
+  state = {
+    isSignedIn: false,
+    doneWithMain: false,
+    screenshot: '',
+    sessionToggle: false,
+  };
   uiConfig = {
     signInFlow: 'popup',
     signInOptions: [
@@ -38,27 +43,41 @@ class Login extends Component {
             <div className='navbar'>
               <button
                 className='signout-button'
-                onClick={() => firebase.auth().signOut()}
+                onClick={() => {
+                  firebase.auth().signOut();
+                  this.setState({
+                    sessionToggle: !this.state.sessionToggle,
+                    doneWithMain: false,
+                  });
+                }}
               >
                 Sign out!
               </button>
               <h1>
-                Welcome, <span>{firebase.auth().currentUser.displayName}</span>
+                {firebase.auth().currentUser.displayName ? (
+                  <span>
+                    Welcome, {firebase.auth().currentUser.displayName}
+                  </span>
+                ) : null}
               </h1>
             </div>
             <div>
               {!this.state.doneWithMain ? (
                 <App
                   onDoneWithMain={(imgbase64) => {
-                    console.log('in here with', imgbase64);
+                    // console.log('in here with', imgbase64);
                     this.setState({
                       doneWithMain: true,
                       screenshot: imgbase64,
+                      sessionToggle: !this.state.sessionToggle,
                     });
                   }}
                 />
               ) : (
-                <Analytics screenshot={this.state.screenshot} />
+                <Analytics
+                  sessionToggle={this.state.sessionToggle}
+                  screenshot={this.state.screenshot}
+                />
               )}
             </div>
           </div>

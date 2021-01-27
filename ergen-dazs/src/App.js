@@ -82,15 +82,16 @@ const App = (props) => {
   const skipCalibrate = async () => {
     console.log('SKIPCALIBRATE START');
 
-    var currUser = firebase.auth().currentUser.email;
+    var currUser = firebase.auth().currentUser;
+    var currUserEmail = currUser !== null ? currUser.email : null;
     console.log('CURRENT USER IS: ', currUser);
-    if (currUser === null) {
+    if (currUser === null || currUserEmail === null) {
       console.log('GUEST');
       return false;
     }
 
     //console.log("CURRENT USER IS: ", currUser);
-    const doc = ref.doc(currUser);
+    const doc = ref.doc(currUserEmail);
 
     const docSnapshot = await doc.get();
     if (docSnapshot.exists) {
@@ -258,6 +259,7 @@ const App = (props) => {
                 toggleCarousel={setShowCarousel}
                 calibrationCapture={handleCalibrate}
                 addFirebaseUser={addUser}
+                newSessionToggle={props.sessionToggle}
               />
             ) : (
               <div className='detection-footer-container'>
