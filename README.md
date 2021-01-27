@@ -1,5 +1,5 @@
 # Ergen-Dazs
-Started durign UC Davis's 2021 Hackathon (Jan 16 - 17) for Social Good
+Started during UC Davis's 2021 Hackathon (Jan 16 - 17) for Social Good
 
 ## Dev Post on it: https://devpost.com/software/ergen-dazs
 
