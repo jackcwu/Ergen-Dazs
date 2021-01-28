@@ -1,7 +1,5 @@
-# Ergen-Dazs
-Started during UC Davis's 2021 Hackathon (Jan 16 - 17) for Social Good
-
-## Hosted at [https://ergen-dazs.netlify.com](https://ergen-dazs.netlify.com)
+# Ergen-Dazs [https://ergen-dazs.netlify.com](https://ergen-dazs.netlify.com)
+Started during UC Davis's 2021 Hackathon (Jan 16 - 17) for Social Good 
 
 ## Dev Post on it: https://devpost.com/software/ergen-dazs
 
