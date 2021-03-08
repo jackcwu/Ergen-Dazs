@@ -220,24 +220,24 @@ const App = (props) => {
   };
 
   return (
-    <div className='App'>
+    <div className="App">
       {loadingModel ? (
         <div>Loading Model...</div>
       ) : (
-        <div className='container'>
+        <div className="container">
           {/* <button onClick={() => {skipCalibrate()}}>press</button> */}
           {showDistancePane && <DistancePane></DistancePane>}
 
-          <div className='webcam-container'>
-            <Webcam ref={webcamRef} className='webcam' />
-            <canvas ref={canvasRef} className='canvas'></canvas>
+          <div className="webcam-container">
+            <Webcam ref={webcamRef} className="webcam" />
+            <canvas ref={canvasRef} className="canvas"></canvas>
           </div>
 
           {showCalibrationPane && <CalibrationPane></CalibrationPane>}
 
           {showDetectionPane && <DetectionPane></DetectionPane>}
 
-          <div className='carousel-container'>
+          <div className="carousel-container">
             {showCarousel ? (
               <Carousel
                 toggleCalibrationPane={setShowCalibrationPane}
@@ -247,24 +247,24 @@ const App = (props) => {
                 addFirebaseUser={addUser}
               />
             ) : (
-              <div className='detection-footer-container'>
-                <div className='checkmark-container'>
+              <div className="detection-footer-container">
+                <div className="checkmark-container">
                   <span>
                     <input
-                      type='checkbox'
-                      name='show-bounding-box'
+                      type="checkbox"
+                      name="show-bounding-box"
                       checked={showBoundingBox}
                       onClick={() => setShowBoundingBox(!showBoundingBox)}
                     ></input>
-                    <label htmlFor='show-bounding-box'>Show Box</label>
+                    <label htmlFor="show-bounding-box">Show Box</label>
                   </span>
                   <span>
                     <input
-                      type='checkbox'
-                      name='take-photo'
+                      type="checkbox"
+                      name="take-photo"
                       checked={true}
                     ></input>
-                    <label htmlFor='take-photo'>Take Photo</label>
+                    <label htmlFor="take-photo">Take Photo</label>
                   </span>
                 </div>
                 <div>

@@ -1,10 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import ReactSwipe from 'react-swipe';
 import './App.css';
 
 // tensorflow face detection model
 import * as tf from '@tensorflow/tfjs';
-import { setWasmPath } from '@tensorflow/tfjs-backend-wasm';
 import * as blazeface from '@tensorflow-models/blazeface';
 import Webcam from 'react-webcam';
 
@@ -32,7 +30,6 @@ const App = (props) => {
   const [distance, setDistance] = useState(0);
 
   const ref = firebase.firestore().collection('users');
-  // console.log(ref);
 
   useEffect(() => {
     console.log('render');
@@ -53,7 +50,6 @@ const App = (props) => {
   };
 
   const checkUserPresent = () => {
-    //console.log(firebase.auth().currentUser.email);
     var currUser = firebase.auth().currentUser.email;
     console.log('CURRENT USER IS: ', currUser);
     if (currUser === null) {
@@ -104,14 +100,6 @@ const App = (props) => {
       console.log('NOOO');
       return false;
     }
-
-    // if (checkUserPresent()) {
-    //   console.log("branch 1")
-    //   setShowCarousel(false);
-    // } else {
-    //   console.log("branch 2")
-    //   console.log("user not present")
-    // }
   };
 
   const retrieveDBmeasurements = async () => {
@@ -135,16 +123,9 @@ const App = (props) => {
     } catch (error) {
       console.log('Error getting document:', error);
     }
-    //console.log("calibrateDB ISSSS", calibrateDB.data)
-    //setCalibrationData(calibrateDB.distance, calibrateDB.face_width);
-    //console.log("FOUND OLD CALIBRATION IT IS:", calibrateDB.distance, calibrateDB.face_width)
   };
 
   const setupModel = async () => {
-    setWasmPath(
-      'https://cdn.jsdelivr.net/npm/@tensorflow/tfjs-backend-wasm@latest/dist/tfjs-backend-wasm.wasm'
-    );
-    await tf.setBackend('wasm');
     const model = await blazeface.load();
     setLoadingModel(false);
     return model;
@@ -224,7 +205,7 @@ const App = (props) => {
   };
 
   return (
-    <div className='App'>
+    <div className="App">
       {loadingModel ? (
         <div
           style={{
@@ -239,19 +220,19 @@ const App = (props) => {
           Loading Model...
         </div>
       ) : (
-        <div className='container'>
+        <div className="container">
           {showDistancePane && <DistancePane></DistancePane>}
 
-          <div className='webcam-container'>
-            <Webcam ref={webcamRef} className='webcam' />
-            <canvas ref={canvasRef} className='canvas'></canvas>
+          <div className="webcam-container">
+            <Webcam ref={webcamRef} className="webcam" />
+            <canvas ref={canvasRef} className="canvas"></canvas>
           </div>
 
           {showCalibrationPane && <CalibrationPane></CalibrationPane>}
 
           {showDetectionPane && <DetectionPane></DetectionPane>}
 
-          <div className='carousel-container'>
+          <div className="carousel-container">
             {showCarousel ? (
               <Carousel
                 toggleCalibrationPane={setShowCalibrationPane}
@@ -262,24 +243,24 @@ const App = (props) => {
                 newSessionToggle={props.sessionToggle}
               />
             ) : (
-              <div className='detection-footer-container'>
-                <div className='checkmark-container'>
+              <div className="detection-footer-container">
+                <div className="checkmark-container">
                   <span>
                     <input
-                      type='checkbox'
-                      name='show-bounding-box'
+                      type="checkbox"
+                      name="show-bounding-box"
                       checked={showBoundingBox}
                       onClick={() => setShowBoundingBox(!showBoundingBox)}
                     ></input>
-                    <label htmlFor='show-bounding-box'>Show Box</label>
+                    <label htmlFor="show-bounding-box">Show Box</label>
                   </span>
                   <span>
                     <input
-                      type='checkbox'
-                      name='take-photo'
+                      type="checkbox"
+                      name="take-photo"
                       checked={true}
                     ></input>
-                    <label htmlFor='take-photo'>Take Photo</label>
+                    <label htmlFor="take-photo">Take Photo</label>
                   </span>
                 </div>
                 <div>
